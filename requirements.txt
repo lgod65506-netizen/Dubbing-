@@ -1,5 +1,5 @@
 streamlit
-setuptools
+setuptools<82
 openai-whisper
 chatterbox-tts
 transformers==4.46.3
