@@ -1,0 +1,8 @@
+gradio
+openai-whisper
+chatterbox-tts
+transformers
+sentencepiece
+torchaudio
+pydub
+librosa
