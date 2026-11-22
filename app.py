@@ -8,6 +8,16 @@ import os
 import subprocess
 import tempfile
 import torch
+# 👇 YAHAN SE PATCH CODE START HAI 👇
+_original_torch_load = torch.load
+def cpu_only_torch_load(*args, **kwargs):
+    kwargs["map_location"] = torch.device("cpu")
+    return _original_torch_load(*args, **kwargs)
+torch.load = cpu_only_torch_load
+# 👆 YAHAN TAK PATCH CODE HAI 👆
+
+st.set_page_config(page_title="Anime Hindi Dubber", layout="centered")
+# ... aage ka baaki code waisa hi rahega ...
 
 st.set_page_config(page_title="Anime Hindi Dubber", layout="centered")
 st.title("🎬 Anime Hindi Dubber")
