@@ -1,5 +1,5 @@
 streamlit
-setuptools<81
+setuptools
 openai-whisper
 chatterbox-tts
 transformers==4.46.3
@@ -8,4 +8,4 @@ torchaudio
 pydub
 librosa
 ffmpeg-python
-numpy<2
+numpy
