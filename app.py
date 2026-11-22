@@ -1,3 +1,5 @@
+import setuptools
+import pkg_resources
 import streamlit as st
 import whisper
 import torchaudio as ta
