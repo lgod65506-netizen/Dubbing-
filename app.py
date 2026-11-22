@@ -15,16 +15,15 @@ st.write("Apni Japanese anime clip upload karein aur Hindi mein dub karein!")
 
 @st.cache_resource
 def load_models():
-    # 1. Whisper Model
+    # 1. Whisper Model (Japanese audio se text nikalne ke liye)
     whisper_model = whisper.load_model("base")
     
-    # 2. Translation Model (Naya tarika jisse error nahi aayega)
+    # 2. Translation Model (Naya tarika - bina pipeline ke)
     model_name = "facebook/nllb-200-distilled-600M"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     translator_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     
-    # 3. Chatterbox TTS Model
-    # Streamlit free tier par GPU nahi hota, isliye "cpu" use kar rahe hain
+    # 3. Chatterbox TTS Model (Aawaz generate karne ke liye)
     tts_model = ChatterboxTTS.from_pretrained(device="cpu") 
     
     return whisper_model, tokenizer, translator_model, tts_model
@@ -65,7 +64,7 @@ if uploaded_file is not None:
                 text = seg["text"].strip()
                 if len(text) < 2: continue
                 
-                # Naya Translation Code
+                # Naya Translation Code (Bina pipeline ke)
                 tokenizer.src_lang = "jpn_Jpan"
                 inputs = tokenizer(text, return_tensors="pt")
                 translated_tokens = translator_model.generate(
