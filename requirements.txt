@@ -1,4 +1,4 @@
-gradio
+streamlit
 openai-whisper
 chatterbox-tts
 transformers
