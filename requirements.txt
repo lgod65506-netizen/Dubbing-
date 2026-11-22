@@ -7,3 +7,5 @@ sentencepiece
 torchaudio
 pydub
 librosa
+ffmpeg-python
+numpy<2
