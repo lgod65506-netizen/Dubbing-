@@ -27,8 +27,10 @@ st.write("Apni Japanese anime clip upload karein aur Hindi mein dub karein!")
 def load_models():
     # Whisper Tiny (Sabse halka)
     whisper_model = whisper.load_model("tiny")
-    # Chatterbox TTS
+    
+    # Chatterbox TTS (Aawaz ke liye)
     tts_model = ChatterboxTTS.from_pretrained(device="cpu") 
+    
     return whisper_model, tts_model
 
 st.info("Models load ho rahe hain, thoda time lagega...")
@@ -58,7 +60,7 @@ if uploaded_file is not None:
             st.text("Hindi translation aur aawaz ban rahi hai...")
             final_audio = AudioSegment.empty()
             
-            # Google Translator (Bina model ke, RAM bachata hai)
+            # Google Translator use karenge (RAM bachane ke liye)
             translator = GoogleTranslator(source='ja', target='hi')
             
             for seg in result["segments"]:
@@ -68,8 +70,9 @@ if uploaded_file is not None:
                 try:
                     hindi_text = translator.translate(text)
                 except:
-                    hindi_text = text # Agar fail ho toh original rakhein
+                    hindi_text = text
                 
+                # Chatterbox se original aawaz mein generate karein
                 wav = tts_model.generate(
                     hindi_text,
                     audio_prompt_path=ref_path,
