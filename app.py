@@ -5,12 +5,12 @@ import streamlit as st
 import whisper
 import torchaudio as ta
 from chatterbox.tts import ChatterboxTTS
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from pydub import AudioSegment
 import os
 import subprocess
 import tempfile
 import torch
+from deep_translator import GoogleTranslator
 
 # Patch: Force torch to load models on CPU
 _original_torch_load = torch.load
@@ -25,21 +25,14 @@ st.write("Apni Japanese anime clip upload karein aur Hindi mein dub karein!")
 
 @st.cache_resource
 def load_models():
-    # 1. Whisper Model (Tiny - Sabse halka)
+    # Whisper Tiny (Sabse halka)
     whisper_model = whisper.load_model("tiny")
-    
-    # 2. Translation Model
-    model_name = "facebook/nllb-200-distilled-600M"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    translator_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    
-    # 3. Chatterbox TTS Model
+    # Chatterbox TTS
     tts_model = ChatterboxTTS.from_pretrained(device="cpu") 
-    
-    return whisper_model, tokenizer, translator_model, tts_model
+    return whisper_model, tts_model
 
 st.info("Models load ho rahe hain, thoda time lagega...")
-whisper_model, tokenizer, translator_model, tts_model = load_models()
+whisper_model, tts_model = load_models()
 st.success("Models taiyaar hain!")
 
 uploaded_file = st.file_uploader("Video Upload Karein (MP4)", type=["mp4", "mkv", "mov"])
@@ -65,18 +58,17 @@ if uploaded_file is not None:
             st.text("Hindi translation aur aawaz ban rahi hai...")
             final_audio = AudioSegment.empty()
             
+            # Google Translator (Bina model ke, RAM bachata hai)
+            translator = GoogleTranslator(source='ja', target='hi')
+            
             for seg in result["segments"]:
                 text = seg["text"].strip()
                 if len(text) < 2: continue
                 
-                tokenizer.src_lang = "jpn_Jpan"
-                inputs = tokenizer(text, return_tensors="pt")
-                translated_tokens = translator_model.generate(
-                    **inputs, 
-                    forced_bos_token_id=tokenizer.convert_tokens_to_ids("hin_Deva"), 
-                    max_length=512
-                )
-                hindi_text = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
+                try:
+                    hindi_text = translator.translate(text)
+                except:
+                    hindi_text = text # Agar fail ho toh original rakhein
                 
                 wav = tts_model.generate(
                     hindi_text,
