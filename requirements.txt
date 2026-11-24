@@ -2,8 +2,8 @@ streamlit
 setuptools<81
 pip<24
 openai-whisper
-chatterbox-multilingual
-transformers==4.46.3
+videopython-chatterbox
+torch
 torchaudio
 pydub
 librosa
